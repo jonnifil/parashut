@@ -146,4 +146,9 @@ class Canopy
     {
         return $this->number . ' ' . $this->main;
     }
+
+    public function getConvertDate()
+    {
+        return $this->pack_date ? $this->packDate->format('d.m.Y') : '';
+    }
 }
