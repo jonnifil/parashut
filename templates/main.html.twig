@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+ {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% block body %}
+<h1 class="text-center">Учёт аренды парашютных систем</h1>
+    <div class="col-md-4 col-xs-12">
+        <h2>Ввод данных</h2>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-default">Сохранить</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+   <div class="col-md-8 col-xs-12">
+       <h2>Вы ввели:</h2>
+       <table class="table">
+           <thead>
+           <tr>
+               <th>Дата</th><th>Система</th><th>Число аренд</th><th>Действия</th>
+           </tr>
+           </thead>
+           <tbody>
+           {% for rent in rents %}
+                <tr>
+                    <td>{{ rent.convertDate }}</td>
+                    <td>{{ rent.canopy.name }}</td>
+                    <td>{{ rent.count }}</td>
+                    <td><a class="btn btn-sm" href="edit/{{ rent.id }}"><span class="glyphicon glyphicon-pencil"></span> </a> </td>
+                </tr>
+           {% else %}
+               <tr><td colspan="4">Не введено ни одной аренды</td> </tr>
+           {% endfor %}
+           </tbody>
+       </table>
+
+   </div>
+
+{% endblock %}

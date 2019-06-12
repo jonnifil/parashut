@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+ {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% block body %}
+    <h1 class="text-center">Аренда {{ rent.canopy.name }} от {{ rent.convertDate }}</h1>
+    <div class="col-md-4 col-md-offset-4 col-xs-12">
+        <h2>Редактирование данных</h2>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-default">Сохранить</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+
+{% endblock %}
