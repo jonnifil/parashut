@@ -25,9 +25,12 @@ class MainController extends Controller
     public function index(Request $request)
     {
         $rent = new Rent();
+        $repository = $this->getDoctrine()->getRepository(Rent::class);
+        $lastRent = $repository->findLastOne();
+        $lastDate = $lastRent ? $lastRent->getRentDate() : '';
 
         $form = $this->createFormBuilder($rent)
-        ->add('rent_date', DateType::class, ['label' => 'Дата', 'widget' => 'single_text', 'format' => 'yyyy-MM-dd',])
+        ->add('rent_date', DateType::class, ['label' => 'Дата', 'widget' => 'single_text', 'format' => 'yyyy-MM-dd', 'data' => $lastDate])
         ->add('canopy', EntityType::class, ['label' => 'Система', 'class' => Canopy::class, 'choice_label' => 'name'])
         ->add('count', IntegerType::class, ['label' => 'Число аренд'])
         ->getForm();
@@ -41,7 +44,6 @@ class MainController extends Controller
             $em->flush();
         }
 
-        $repository = $this->getDoctrine()->getRepository(Rent::class);
         $rentList = $repository->findByLastCount(10);
 
         return $this->render('main.html.twig', ['form' => $form->createView(), 'rents' => $rentList]);

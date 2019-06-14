@@ -26,7 +26,7 @@
                     <td>{{ rent.convertDate }}</td>
                     <td>{{ rent.canopy.name }}</td>
                     <td>{{ rent.count }}</td>
-                    <td><a class="btn btn-sm" href="edit/{{ rent.id }}"><span class="glyphicon glyphicon-pencil"></span> </a> </td>
+                    <td><a class="btn btn-sm" href="{{ path('edit', {'rent': rent.id}) }}"><span class="glyphicon glyphicon-pencil"></span> </a> </td>
                 </tr>
            {% else %}
                <tr><td colspan="4">Не введено ни одной аренды</td> </tr>

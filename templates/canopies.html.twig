@@ -24,7 +24,7 @@
                     <td>{{ canopy.rig }}</td>
                     <td>{{ canopy.aad }}</td>
                     <td>{{ canopy.convertDate }}</td>
-                    <td><a class="btn btn-sm" href="/canopy/add/{{ canopy.id }}"><span class="glyphicon glyphicon-pencil"></span> </a> </td>
+                    <td><a class="btn btn-sm" href="{{ path('canopy-add', {'canopy':canopy.id}) }}"><span class="glyphicon glyphicon-pencil"></span> </a> </td>
                 </tr>
             {% else %}
                 <tr><td colspan="4">Не введено ни одной системы</td> </tr>

@@ -35,15 +35,15 @@ class RentRepository extends ServiceEntityRepository
     }
 
 
-    /*
-    public function findOneBySomeField($value): ?Rent
+
+    public function findLastOne(): ?Rent
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
+            ->orderBy('r.id', 'DESC')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+
 }
