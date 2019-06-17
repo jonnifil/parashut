@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="text-center">Аренды парашютных систем</h1>
+    <div class="col-md-8 col-xs-12">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Инв. номер</th>
+                <th>Число аренд</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for result in results %}
+                <tr>
+                    <td>{{ result.number }}</td>
+                    <td>{{ result.sum }}</td>
+                    </tr>
+            {% else %}
+                <tr><td colspan="">Нет данных за этот месяц</td> </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}

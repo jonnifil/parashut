@@ -74,4 +74,15 @@ class MainController extends Controller
         }
         return $this->render('edit_rent.html.twig', ['form' => $form->createView(), 'rent' => $rent]);
     }
+
+    /**
+     * @Route("/rents", name="rents")
+     * @param Request $request
+     * @return Response
+     */
+    public function rents(Request $request)
+    {
+        return $this->render('');
+    }
+
 }

@@ -35,7 +35,9 @@ class RentRepository extends ServiceEntityRepository
     }
 
 
-
+    /**
+     * @return Rent|null
+     */
     public function findLastOne(): ?Rent
     {
         return $this->createQueryBuilder('r')

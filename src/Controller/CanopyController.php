@@ -65,4 +65,17 @@ class CanopyController extends Controller
         }
         return $this->render('canopy_add.html.twig', ['form' => $form->createView(), 'message' => $message]);
     }
+
+    /**
+     * @Route("/canopy/month", name="month-rents")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function month(Request $request)
+    {
+        $month = date('Y-m');
+        $repository = $this->getDoctrine()->getRepository(Canopy::class);
+        $results = $repository->findSumByMonth($month);
+        return $this->render('canopy_rents.html.twig', ['results' => $results]);
+    }
 }

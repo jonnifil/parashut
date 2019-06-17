@@ -47,4 +47,19 @@ class CanopyRepository extends ServiceEntityRepository
         ;
     }
     */
+
+
+    public function findSumByMonth($month)
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.number, SUM(r.count) as sum')
+            ->innerJoin('c.rents', 'r')
+//            ->where('r.rentDate like :month')
+//            ->setParameter(':month', $month)
+            ->groupBy('c.id')
+            ->orderBy('c.number')
+            ->getQuery()
+            ->getArrayResult()
+            ;
+    }
 }
