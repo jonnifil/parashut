@@ -76,6 +76,11 @@ class CanopyController extends Controller
         $month = date('Y-m');
         $repository = $this->getDoctrine()->getRepository(Canopy::class);
         $results = $repository->findSumByMonth($month);
-        return $this->render('canopy_rents.html.twig', ['results' => $results]);
+        $sum = 0;
+        if ($results) {
+            foreach ($results as $result)
+                $sum += $result['sum'];
+        }
+        return $this->render('canopy_rents.html.twig', ['results' => $results, 'sum' => $sum]);
     }
 }

@@ -49,13 +49,19 @@ class CanopyRepository extends ServiceEntityRepository
     */
 
 
-    public function findSumByMonth($month)
+    public function findSumByMonth($year=null, $month=null)
     {
+        $year = isset($year) ? $year : date('Y');
+        $month = isset($month) ? $month : date('m');
+        $start = new \DateTime();
+        $start->setDate((int)$year,(int)$month,1);
+        $interval = new \DateInterval('P1M');
         return $this->createQueryBuilder('c')
             ->select('c.number, SUM(r.count) as sum')
             ->innerJoin('c.rents', 'r')
-//            ->where('r.rentDate like :month')
-//            ->setParameter(':month', $month)
+            ->where('r.rentDate >= :start and r.rentDate <= :end')
+            ->setParameter('start', $start->format('Y-m-d H:i:s'))
+            ->setParameter('end', $start->add($interval)->format('Y-m-d H:i:s'))
             ->groupBy('c.id')
             ->orderBy('c.number')
             ->getQuery()

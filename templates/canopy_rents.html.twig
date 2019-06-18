@@ -15,10 +15,13 @@
                 <tr>
                     <td>{{ result.number }}</td>
                     <td>{{ result.sum }}</td>
-                    </tr>
+                </tr>
             {% else %}
                 <tr><td colspan="">Нет данных за этот месяц</td> </tr>
             {% endfor %}
+            {% if sum > 0 %}
+                <tr><td>ВСЕГО</td><td>{{ sum }}</td></tr>
+            {% endif %}
             </tbody>
         </table>
 
