@@ -10,6 +10,8 @@ namespace App\Controller;
 
 
 use App\Entity\Canopy;
+use App\Entity\Month;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -73,14 +75,40 @@ class CanopyController extends Controller
      */
     public function month(Request $request)
     {
-        $month = date('Y-m');
+        $month = null;
+        $year = null;
+        $yearList = [];
+        $firstYear = date('Y');
+        for ($i=0; $i<5; $i++) {
+            $yearList[$firstYear - $i] = $firstYear - $i;
+        }
+        $monthList = [
+            'январь' => '1',
+            'февраль' => '2',
+            'март' => '3',
+            'апрель' => '4',
+            'май' => '5',
+            'июнь' => '6',
+            'июль' => '7',
+            'август' => '8',
+            'сентябрь' => '9',
+            'октябрь' => '10',
+            'ноябрь' => '11',
+            'декабрь' => '12',
+        ];
+        $monthForm = new Month();
+        $form = $this->createFormBuilder($monthForm)
+            ->add('year', ChoiceType::class, ['label' => 'Выберите год', 'choices' => $yearList])
+            ->add('month', ChoiceType::class, ['label' => 'Выберите месяц', 'choices' => $monthList])
+            ->getForm()
+        ;
         $repository = $this->getDoctrine()->getRepository(Canopy::class);
-        $results = $repository->findSumByMonth($month);
+        $results = $repository->findSumByMonth($year, $month);
         $sum = 0;
         if ($results) {
             foreach ($results as $result)
                 $sum += $result['sum'];
         }
-        return $this->render('canopy_rents.html.twig', ['results' => $results, 'sum' => $sum]);
+        return $this->render('canopy_rents.html.twig', ['results' => $results, 'sum' => $sum, 'form' => $form->createView()]);
     }
 }
