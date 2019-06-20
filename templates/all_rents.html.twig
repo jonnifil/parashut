@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="text-center">Учёт аренды парашютных систем</h1>
+    <div class="col-md-8 col-xs-12">
+        {% if maxPages > 1 %}
+            <ul class="pagination pagination-sm">
+                {# `«` arrow  #}
+                <li {{ thisPage == 1 ? 'class="disabled"' }}>
+                    <a href="{{ path('rents', {page: thisPage-1 < 1 ? 1 : thisPage-1}) }}">«</a>
+                </li>
+
+                {# Render each page number #}
+                {% for i in 1..maxPages %}
+                    <li {{ thisPage == i ? 'class="active"' }}>
+                        <a href="{{ path('rents', {page: i}) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+
+                {# `»` arrow #}
+                <li {{ thisPage == maxPages ? 'class="disabled"' }}>
+                    <a href="{{ path('rents', {page: thisPage+1 <= maxPages ? thisPage+1 : thisPage}) }}">»</a>
+                </li>
+            </ul>
+        {% endif %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Дата</th><th>Система</th><th>Число аренд</th><th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for rent in rents %}
+                <tr>
+                    <td>{{ rent.convertDate }}</td>
+                    <td>{{ rent.canopy.name }}</td>
+                    <td>{{ rent.count }}</td>
+                    <td><a class="btn btn-sm" href="{{ path('edit', {'rent': rent.id}) }}"><span class="glyphicon glyphicon-pencil"></span> </a> </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4">Не введено ни одной аренды</td> </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}

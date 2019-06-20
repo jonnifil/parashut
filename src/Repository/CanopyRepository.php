@@ -55,6 +55,7 @@ class CanopyRepository extends ServiceEntityRepository
         $month = isset($month) ? $month : date('m');
         $start = new \DateTime();
         $start->setDate((int)$year,(int)$month,1);
+        $start->setTime(0,0);
         $interval = new \DateInterval('P1M');
         return $this->createQueryBuilder('c')
             ->select('c.number, SUM(r.count) as sum')
@@ -62,7 +63,7 @@ class CanopyRepository extends ServiceEntityRepository
             ->where('r.rentDate >= :start and r.rentDate <= :end')
             ->setParameter('start', $start->format('Y-m-d H:i:s'))
             ->setParameter('end', $start->add($interval)->format('Y-m-d H:i:s'))
-            ->groupBy('c.id')
+            ->groupBy('r.canopy')
             ->orderBy('c.number')
             ->getQuery()
             ->getArrayResult()

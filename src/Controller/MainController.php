@@ -76,13 +76,17 @@ class MainController extends Controller
     }
 
     /**
-     * @Route("/rents", name="rents")
-     * @param Request $request
+     * @Route("/rents/{page}", name="rents")
+     * @param integer $page
      * @return Response
      */
-    public function rents(Request $request)
+    public function rents($page=1)
     {
-        return $this->render('');
+        $repository = $this->getDoctrine()->getRepository(Rent::class);
+        $rents = $repository->getAllRents($page);
+        $countRents = count($repository->findAll());
+        $maxPages = ceil($countRents / 20);
+        return $this->render('all_rents.html.twig', ['rents' => $rents, 'maxPages' => $maxPages, 'thisPage' => $page]);
     }
 
 }

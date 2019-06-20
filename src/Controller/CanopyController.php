@@ -77,31 +77,18 @@ class CanopyController extends Controller
     {
         $month = null;
         $year = null;
-        $yearList = [];
-        $firstYear = date('Y');
-        for ($i=0; $i<5; $i++) {
-            $yearList[$firstYear - $i] = $firstYear - $i;
-        }
-        $monthList = [
-            'январь' => '1',
-            'февраль' => '2',
-            'март' => '3',
-            'апрель' => '4',
-            'май' => '5',
-            'июнь' => '6',
-            'июль' => '7',
-            'август' => '8',
-            'сентябрь' => '9',
-            'октябрь' => '10',
-            'ноябрь' => '11',
-            'декабрь' => '12',
-        ];
         $monthForm = new Month();
         $form = $this->createFormBuilder($monthForm)
-            ->add('year', ChoiceType::class, ['label' => 'Выберите год', 'choices' => $yearList])
-            ->add('month', ChoiceType::class, ['label' => 'Выберите месяц', 'choices' => $monthList])
+            ->add('year', ChoiceType::class, ['label' => 'Выберите год', 'choices' => Month::getYearList()])
+            ->add('month', ChoiceType::class, ['label' => 'Выберите месяц', 'choices' => Month::MONTH_LIST])
             ->getForm()
         ;
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $year = $data->getYear();
+            $month = $data->getMonth();
+        }
         $repository = $this->getDoctrine()->getRepository(Canopy::class);
         $results = $repository->findSumByMonth($year, $month);
         $sum = 0;
