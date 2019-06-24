@@ -75,12 +75,12 @@ class CanopyController extends Controller
      */
     public function month(Request $request)
     {
-        $month = null;
-        $year = null;
+        $month = date('n');
+        $year = date('Y');
         $monthForm = new Month();
         $form = $this->createFormBuilder($monthForm)
             ->add('year', ChoiceType::class, ['label' => 'Выберите год', 'choices' => Month::getYearList()])
-            ->add('month', ChoiceType::class, ['label' => 'Выберите месяц', 'choices' => Month::MONTH_LIST])
+            ->add('month', ChoiceType::class, ['label' => 'Выберите месяц', 'choices' => Month::MONTH_LIST, 'data' => $month])
             ->getForm()
         ;
         $form->handleRequest($request);
