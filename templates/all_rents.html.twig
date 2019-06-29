@@ -26,7 +26,12 @@
         <table class="table">
             <thead>
             <tr>
-                <th>Дата</th><th>Система</th><th>Число аренд</th><th>Действия</th>
+                <th>Дата</th>
+                <th>Система</th>
+                <th>Число аренд</th>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <th>Действия</th>
+                {% endif %}
             </tr>
             </thead>
             <tbody>
@@ -35,14 +40,18 @@
                     <td>{{ rent.convertDate }}</td>
                     <td>{{ rent.canopy.name }}</td>
                     <td>{{ rent.count }}</td>
-                    <td><a class="btn btn-sm" href="{{ path('edit', {'rent': rent.id}) }}"><span class="glyphicon glyphicon-pencil"></span> </a> </td>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <td>
+                        <a class="btn btn-sm" href="{{ path('edit', {'rent': rent.id}) }}">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                    </td>
+                {% endif %}
                 </tr>
             {% else %}
                 <tr><td colspan="4">Не введено ни одной аренды</td> </tr>
             {% endfor %}
             </tbody>
         </table>
-
     </div>
-
 {% endblock %}

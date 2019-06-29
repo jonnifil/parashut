@@ -12,7 +12,9 @@
                 <th>Ранец</th>
                 <th>Прибор</th>
                 <th>Дата переукладки ПЗ</th>
-                <th>Действия</th>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <th>Действия</th>
+                {% endif %}
             </tr>
             </thead>
             <tbody>
@@ -24,7 +26,13 @@
                     <td>{{ canopy.rig }}</td>
                     <td>{{ canopy.aad }}</td>
                     <td>{{ canopy.convertDate }}</td>
-                    <td><a class="btn btn-sm" href="{{ path('canopy-add', {'canopy':canopy.id}) }}"><span class="glyphicon glyphicon-pencil"></span> </a> </td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>
+                            <a class="btn btn-sm" href="{{ path('canopy-add', {'canopy':canopy.id}) }}">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                        </td>
+                    {% endif %}
                 </tr>
             {% else %}
                 <tr><td colspan="4">Не введено ни одной системы</td> </tr>

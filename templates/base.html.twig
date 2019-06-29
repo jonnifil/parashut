@@ -11,28 +11,30 @@
         {% block navbar %}
             <nav class="navbar navbar-default" role="navigation">
                 <div class="container-fluid">
-                    <!-- Brand and toggle get grouped for better mobile display -->
                     <div class="navbar-header">
-                        {#<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">#}
-                            {#<span class="sr-only">Toggle navigation</span>#}
-                            {#<span class="icon-bar"></span>#}
-                            {#<span class="icon-bar"></span>#}
-                            {#<span class="icon-bar"></span>#}
-                        {#</button>#}
-                        <a class="navbar-brand" href="{{ path('home') }}">Учёт аренд</a>
-                    </div>
+                        <span class="navbar-brand">Привет, {% if app.user != null %}{{ app.user.username }}{% else %}гость{% endif %}!</span>
 
-                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    </div>
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <li><a href="{{ path('home') }}">Ввод аренд</a></li>
-                            <li><a href="{{ path('rents') }}">Все аренды</a></li>
-                            <li><a href="{{ path('month-rents') }}">По месяцам</a></li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li><a href="{{ path('home') }}">Ввод аренд</a></li>
+                                <li><a href="{{ path('canopy-add') }}">Добавить систему</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') %}
+                                <li><a href="{{ path('rents') }}">Все аренды</a></li>
+                                <li><a href="{{ path('month-rents') }}">По месяцам</a></li>
+                            {% endif %}
                             <li><a href="{{ path('canopy') }}">Системы</a></li>
-                            <li><a href="{{ path('canopy-add') }}">Добавить систему</a></li>
+                            {% if app.user == null %}
+                                <li><a href="{{ path('login') }}">Войти в систему</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') %}
+                                <li><a href="{{ path('logout') }}">Выйти</a></li>
+                            {% endif %}
                         </ul>
-                    </div><!-- /.navbar-collapse -->
-                </div><!-- /.container-fluid -->
+                    </div>
+                </div>
             </nav>
 
         {% endblock %}
