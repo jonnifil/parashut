@@ -10,9 +10,11 @@ namespace App\Controller;
 
 
 use App\Entity\Canopy;
+use App\Entity\CanopyImage;
 use App\Entity\Month;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,9 +44,11 @@ class CanopyController extends Controller
     public function add(Request $request, Canopy $canopy=null)
     {
         $message = 'Редактирование системы';
+        $edit = true;
         if (!$canopy) {
             $message = 'Добавление системы для аренды';
             $canopy = new Canopy();
+            $edit = false;
         }
 
         $form = $this->createFormBuilder($canopy)
@@ -65,7 +69,16 @@ class CanopyController extends Controller
             $em->flush();
             return $this->redirectToRoute('canopy');
         }
-        return $this->render('canopy_add.html.twig', ['form' => $form->createView(), 'message' => $message]);
+        $image = new CanopyImage();
+        $imageForm = $this->createFormBuilder($image)
+            ->add('file', FileType::class, ['label' => 'Выберите файл'])
+            ->getForm();
+        return $this->render('canopy_add.html.twig', [
+            'form' => $form->createView(),
+            'message' => $message,
+            'edit' => $edit,
+            'image' => $imageForm->createView()
+        ]);
     }
 
     /**

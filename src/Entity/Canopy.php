@@ -52,6 +52,11 @@ class Canopy
      */
     private $rents;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CanopyImage", mappedBy="canopy")
+     */
+    private $images;
+
     public function __construct()
     {
         $this->rents = new ArrayCollection();
@@ -63,6 +68,14 @@ class Canopy
     public function getRents()
     {
         return $this->rents;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getImages()
+    {
+        return $this->images;
     }
 
     public function getId(): ?int
