@@ -12,18 +12,23 @@ use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class MainController extends Controller
 {
 
     /**
      * @param Request $request
-     * @return Response
-     * @Route("/", name="home")
+     * @param AuthorizationCheckerInterface $auth
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @Route("/admin", name="home")
      */
-    public function index(Request $request)
+    public function index(Request $request, AuthorizationCheckerInterface $auth)
     {
+        if ($auth->isGranted('ROLE_ADMIN') === false)
+            return $this->redirectToRoute('login');
         $rent = new Rent();
         $repository = $this->getDoctrine()->getRepository(Rent::class);
         $lastRent = $repository->findLastOne();
@@ -52,11 +57,14 @@ class MainController extends Controller
     /**
      * @param Request $request
      * @param Rent $rent
-     * @return Response
+     * @param AuthorizationCheckerInterface $auth
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      * @Route("/edit/{rent}", name="edit")
      */
-    public function edit(Request $request, Rent $rent)
+    public function edit(Request $request, Rent $rent, AuthorizationCheckerInterface $auth)
     {
+        if ($auth->isGranted('ROLE_ADMIN') === false)
+            return $this->redirectToRoute('login');
         $form = $this->createFormBuilder($rent)
             ->add('rent_date', DateType::class, ['label' => 'Дата', 'widget' => 'single_text', 'format' => 'yyyy-MM-dd',])
             ->add('canopy', EntityType::class, ['label' => 'Система', 'class' => Canopy::class, 'choice_label' => 'name'])

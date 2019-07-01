@@ -20,12 +20,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CanopyController extends Controller
 {
 
     /**
-     * @Route("/canopy", name="canopy")
+     * @Route("/", name="canopy")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function index()
@@ -36,13 +37,16 @@ class CanopyController extends Controller
     }
 
     /**
-     * @Route("/canopy/add/{canopy}", name="canopy-add")
      * @param Request $request
-     * @param Canopy $canopy
+     * @param Canopy|null $canopy
+     * @param AuthorizationCheckerInterface $auth
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @Route("/canopy/add/{canopy}", name="canopy-add")
      */
-    public function add(Request $request, Canopy $canopy=null)
+    public function add(Request $request, Canopy $canopy=null, AuthorizationCheckerInterface $auth)
     {
+        if ($auth->isGranted('ROLE_ADMIN') === false)
+            return $this->redirectToRoute('login');
         $message = 'Редактирование системы';
         $edit = true;
         if (!$canopy) {
