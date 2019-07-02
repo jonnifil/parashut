@@ -12,6 +12,7 @@ namespace App\Controller;
 use App\Entity\Canopy;
 use App\Entity\CanopyImage;
 use App\Entity\Month;
+use App\Service\CanopyImageUploader;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -73,15 +74,11 @@ class CanopyController extends Controller
             $em->flush();
             return $this->redirectToRoute('canopy');
         }
-        $image = new CanopyImage();
-        $imageForm = $this->createFormBuilder($image)
-            ->add('file', FileType::class, ['label' => 'Выберите файл'])
-            ->getForm();
         return $this->render('canopy_add.html.twig', [
             'form' => $form->createView(),
             'message' => $message,
             'edit' => $edit,
-            'image' => $imageForm->createView()
+            'canopy' => $canopy
         ]);
     }
 
@@ -114,5 +111,38 @@ class CanopyController extends Controller
                 $sum += $result['sum'];
         }
         return $this->render('canopy_rents.html.twig', ['results' => $results, 'sum' => $sum, 'form' => $form->createView()]);
+    }
+
+    /**
+     * @param Request $request
+     * @param Canopy $canopy
+     * @param AuthorizationCheckerInterface $auth
+     * @param CanopyImageUploader $fileUploader
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @Route("/canopy/file/{canopy}", name="canopy-file")
+     */
+    public function fileUpload(Request $request, Canopy $canopy, AuthorizationCheckerInterface $auth, CanopyImageUploader $fileUploader)
+    {
+        if ($auth->isGranted('ROLE_ADMIN') === false)
+            return $this->redirectToRoute('login');
+        $image = new CanopyImage();
+        $imageForm = $this->createFormBuilder($image, ['block_name' => 'image'])
+            ->add('file', FileType::class, ['label' => 'Выберите файл'])
+            ->getForm();
+
+        $imageForm->handleRequest($request);
+
+        if ($imageForm->isSubmitted() ) {
+            $file = $imageForm->getData()->file;
+            $fileName = $fileUploader->upload($file);
+            $image->setFile($fileName);
+            $image->setCanopy($canopy);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($image);
+            $em->flush();
+        }
+        return $this->render('canopy_file.html.twig', [
+            'image' => $imageForm->createView()
+        ]);
     }
 }
