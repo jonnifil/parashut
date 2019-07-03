@@ -27,7 +27,7 @@ class CanopyController extends Controller
 {
 
     /**
-     * @Route("/", name="canopy")
+     * @Route("/", name="canopies")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function index()
@@ -35,6 +35,20 @@ class CanopyController extends Controller
         $repository = $this->getDoctrine()->getRepository(Canopy::class);
         $canopyList = $repository->findAll();
         return $this->render('canopies.html.twig', ['canopies' => $canopyList]);
+    }
+
+    /**
+     * @Route("/view/{canopy}", name="view")
+     * @param Canopy $canopy
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function viewCanopy(Canopy $canopy)
+    {
+        return $this->render('canopy_view.html.twig', [
+            'canopy' => $canopy,
+            'files' => $canopy->getImages()
+        ]);
+
     }
 
     /**
@@ -72,7 +86,7 @@ class CanopyController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($canopy);
             $em->flush();
-            return $this->redirectToRoute('canopy');
+            return $this->redirectToRoute('canopies');
         }
         return $this->render('canopy_add.html.twig', [
             'form' => $form->createView(),
@@ -126,14 +140,15 @@ class CanopyController extends Controller
         if ($auth->isGranted('ROLE_ADMIN') === false)
             return $this->redirectToRoute('login');
         $image = new CanopyImage();
-        $imageForm = $this->createFormBuilder($image, ['block_name' => 'image'])
+        $imageForm = $this->createFormBuilder()
             ->add('file', FileType::class, ['label' => 'Выберите файл'])
             ->getForm();
 
         $imageForm->handleRequest($request);
 
-        if ($imageForm->isSubmitted() ) {
-            $file = $imageForm->getData()->file;
+        if ($imageForm->isSubmitted() && $imageForm->isValid()) {
+            $data = $imageForm->getData();
+            $file = $data['file'];
             $fileName = $fileUploader->upload($file);
             $image->setFile($fileName);
             $image->setCanopy($canopy);
@@ -141,7 +156,12 @@ class CanopyController extends Controller
             $em->persist($image);
             $em->flush();
         }
+        $files = $canopy->getImages();
+        $count = count($files);
         return $this->render('canopy_file.html.twig', [
+            'canopy' => $canopy,
+            'files' => $files,
+            'count' => $count,
             'image' => $imageForm->createView()
         ]);
     }

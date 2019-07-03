@@ -12,6 +12,7 @@
                 <th>Ранец</th>
                 <th>Прибор</th>
                 <th>Дата переукладки ПЗ</th>
+                <th>Посмотреть</th>
                 {% if is_granted('ROLE_ADMIN') %}
                     <th>Действия</th>
                 {% endif %}
@@ -26,6 +27,11 @@
                     <td>{{ canopy.rig }}</td>
                     <td>{{ canopy.aad }}</td>
                     <td>{{ canopy.convertDate }}</td>
+                    <td>
+                        <a class="btn btn-sm" href="{{ path('view', {'canopy':canopy.id}) }}">
+                            <span class="glyphicon glyphicon-open-file"></span>
+                        </a>
+                    </td>
                     {% if is_granted('ROLE_ADMIN') %}
                         <td>
                             <a class="btn btn-sm" href="{{ path('canopy-add', {'canopy':canopy.id}) }}">

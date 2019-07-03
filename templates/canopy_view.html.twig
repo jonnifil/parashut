@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2 class="text-center">Просмотр {{ canopy.number }} {{ canopy.main }}</h2>
+    <div class="col-md-12" style="margin-bottom: 30px;">
+        {% for file in files %}
+            <div class="col-md-4 col-xs-12">
+                <img src="/uploads/images/{{ file.file }}" width="100%">
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
