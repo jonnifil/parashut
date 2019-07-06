@@ -6,7 +6,7 @@
         {% for file in files %}
             <div class="col-md-4 col-xs-12">
                 <img src="/uploads/images/{{ file.file }}" width="100%">
-                <a class="btn btn-danger" href="">Удалить</a>
+                <a class="btn btn-danger" href="{{ path('file-delete', {'image':file.id}) }}">Удалить</a>
             </div>
         {% endfor %}
     </div>

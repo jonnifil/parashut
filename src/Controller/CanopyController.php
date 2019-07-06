@@ -92,7 +92,8 @@ class CanopyController extends Controller
             'form' => $form->createView(),
             'message' => $message,
             'edit' => $edit,
-            'canopy' => $canopy
+            'canopy' => $canopy,
+            'files' => $canopy->getImages()
         ]);
     }
 
@@ -164,5 +165,48 @@ class CanopyController extends Controller
             'count' => $count,
             'image' => $imageForm->createView()
         ]);
+    }
+
+    /**
+     * @param AuthorizationCheckerInterface $auth
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    private function adminAuth(AuthorizationCheckerInterface $auth)
+    {
+        if ($auth->isGranted('ROLE_ADMIN') === false)
+            return $this->redirectToRoute('login');
+    }
+
+    /**
+     * @param $fileName
+     * @param CanopyImageUploader $fileUploader
+     */
+    protected function unlinkFile($fileName, CanopyImageUploader $fileUploader)
+    {
+        $targetDir = $fileUploader->getTargetDir();
+        $file = $targetDir . '/' . $fileName;
+        if (is_file($file)) {
+            unlink($file);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param CanopyImage $image
+     * @param AuthorizationCheckerInterface $auth
+     * @param CanopyImageUploader $fileUploader
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @Route("/canopy/file-delete/{image}", name="file-delete")
+     */
+    public function deleteImage(Request $request, CanopyImage $image, AuthorizationCheckerInterface $auth, CanopyImageUploader $fileUploader)
+    {
+        $this->adminAuth($auth);
+        $canopy = $image->getCanopy();
+        $file = $image->getFile();
+        $this->unlinkFile($file, $fileUploader);
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($image);
+        $em->flush();
+        return $this->redirectToRoute('canopy-add', ['canopy' =>$canopy->getId()]);
     }
 }
