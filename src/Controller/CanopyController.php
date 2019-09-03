@@ -100,10 +100,13 @@ class CanopyController extends Controller
     /**
      * @Route("/canopy/month", name="month-rents")
      * @param Request $request
+     * @param AuthorizationCheckerInterface $auth
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function month(Request $request)
+    public function month(Request $request, AuthorizationCheckerInterface $auth)
     {
+        if ($auth->isGranted('ROLE_ADMIN') === false && $auth->isGranted('ROLE_USER') === false)
+            return $this->redirectToRoute('login');
         $month = date('n');
         $year = date('Y');
         $monthForm = new Month();
